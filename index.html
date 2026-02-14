@@ -40,7 +40,25 @@
   <h3>Total arrecadado: R$ <span id="total">0</span></h3>
 
   <!-- JS -->
-  <script src="script.js"></script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8_Xn_GpvfAVsu-uZVve2h7ivz78bE6I8",
+    authDomain: "controle-pix-8f3b5.firebaseapp.com",
+    projectId: "controle-pix-8f3b5",
+    storageBucket: "controle-pix-8f3b5.firebasestorage.app",
+    messagingSenderId: "330284203781",
+    appId: "1:330284203781:web:2e1316c9009a3bd18e816c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+</script>
+
+<script type="module" src="script.js"></script>
+
 </body>
 </html>
 
