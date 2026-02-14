@@ -15,22 +15,19 @@
   <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
-  <!-- Mostrar usuário logado -->
-  <p id="usuarioLogado">Usuário: <span id="nomeLogado"></span></p>
-
   <!-- Abas -->
   <div class="tabs">
-    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
+    <button class="tablink active" onclick="openTab('enviar', event)">Registrar Pagamento</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
     <button class="tablink" onclick="openTab('adm', event)">ADM</button>
   </div>
 
-  <!-- Aba Enviar Pix -->
+  <!-- Aba Enviar -->
   <div id="enviar" class="tabcontent">
     <div class="card">
-      <input type="number" id="valor" placeholder="Valor (R$)">
-      <button onclick="iniciarPagamento(this)">Pagar</button>
-      <p id="pixChave" style="display:none;">PIX: 88994520224</p>
+      <input type="text" id="nomePagador" placeholder="Nome da pessoa">
+      <input type="text" id="valor" placeholder="Valor (R$)">
+      <button onclick="iniciarPagamento(this)">Registrar pagamento</button>
     </div>
   </div>
 
@@ -52,31 +49,27 @@
       </tbody>
     </table>
 
-    <h3>Total arrecadado: R$ <span id="total">0</span></h3>
+    <h3>Total arrecadado: R$ <span id="total">0,00</span></h3>
   </div>
 
-<!-- Aba ADM -->
-<div id="adm" class="tabcontent" style="display:none;">
-  <h2>Painel ADM</h2>
-  <p>Saldo: R$ <span id="saldoADM">0</span></p>
+  <!-- Aba ADM -->
+  <div id="adm" class="tabcontent" style="display:none;">
+    <h2>Painel ADM</h2>
+    <p>Saldo: R$ <span id="saldoADM">0,00</span></p>
 
-  <input type="password" id="senhaADM" placeholder="Senha ADM">
-  <button onclick="entrarADM()">Entrar</button>
+    <input type="password" id="senhaADM" placeholder="Senha ADM">
+    <button onclick="entrarADM()">Entrar</button>
 
-  <div id="painelADM" style="display:none;">
-    <h3>Retirar verba</h3>
-    <input type="number" id="retirarValor" placeholder="Quanto retirar?">
-    <button onclick="retirarVerba()">Retirar</button>
+    <div id="painelADM" style="display:none;">
+      <h3>Retirar verba</h3>
+      <input type="number" id="retirarValor" placeholder="Quanto retirar?">
+      <button onclick="retirarVerba()">Retirar</button>
 
-    <h3>Adicionar verba</h3>
-    <input type="number" id="adicionarValor" placeholder="Quanto adicionar?">
-    <button onclick="adicionarVerba()">Adicionar</button>
+      <h3>Adicionar verba</h3>
+      <input type="number" id="adicionarValor" placeholder="Quanto adicionar?">
+      <button onclick="adicionarVerba()">Adicionar</button>
+    </div>
   </div>
-</div>
-
-
-  <!-- Botão instalar app -->
-  <button id="installBtn" style="display:none;">📲 Baixar aplicativo</button>
 
   <!-- Firebase -->
   <script type="module">
@@ -98,24 +91,6 @@
 
   <!-- Script principal -->
   <script type="module" src="script.js"></script>
-
-  <!-- PWA: botão instalar -->
-  <script>
-    let deferredPrompt;
-    const installBtn = document.getElementById("installBtn");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "block";
-
-      installBtn.addEventListener("click", () => {
-        installBtn.style.display = "none";
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-      });
-    });
-  </script>
 
 </body>
 </html>
