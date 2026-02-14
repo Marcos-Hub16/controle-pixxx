@@ -5,41 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Protagonismo</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .tabs { margin-bottom: 20px; }
-    .tablink { padding: 10px 20px; cursor: pointer; margin-right: 5px; }
-    .tablink.active { background-color: #333; color: white; }
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+    .logo { display: block; margin: 0 auto 20px; width: 150px; }
+    h1, h2, h3, p { text-align: center; }
+    .tabs { text-align: center; margin-bottom: 20px; }
+    .tablink { padding: 10px 20px; cursor: pointer; margin-right: 5px; border: none; background-color: #555; color: white; border-radius: 5px; }
+    .tablink.active { background-color: #ffcc00; color: #333; }
     .tabcontent { display: none; }
-    .card { margin-top: 20px; }
-    input { margin: 5px 0; padding: 5px; width: 200px; }
-    button { padding: 5px 10px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 5px; text-align: left; }
-    th { background-color: #eee; }
+    .card { background: white; padding: 20px; margin: 0 auto; max-width: 300px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    input { margin: 10px 0; padding: 10px; width: 100%; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
+    button { padding: 10px 15px; width: 100%; border: none; border-radius: 5px; background-color: #333; color: #fff; cursor: pointer; margin-top: 10px; }
+    button:hover { background-color: #555; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #333; color: white; }
+    td button { width: auto; padding: 5px 10px; background-color: red; color: white; border-radius: 3px; }
   </style>
 </head>
 <body>
+
+  <img src="logo.png" alt="Logo" class="logo">
 
   <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
   <!-- Abas -->
   <div class="tabs">
-    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
+    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pagamento</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
     <button class="tablink" onclick="openTab('adm', event)">ADM</button>
   </div>
 
-  <!-- Aba Enviar Pix -->
+  <!-- Aba Enviar -->
   <div id="enviar" class="tabcontent" style="display:block;">
     <div class="card">
       <input type="text" id="nome" placeholder="Digite seu nome">
       <input type="number" id="valor" placeholder="Valor (ex: 2,00)" step="0.01" min="0">
-      <button onclick="iniciarPagamento(this)">Pagar</button>
+      <button onclick="iniciarPagamento(this)">Registrar Pagamento</button>
     </div>
   </div>
 
-  <!-- Aba Lista de Pagamentos -->
+  <!-- Aba Lista -->
   <div id="lista" class="tabcontent">
     <h2>Pagamentos registrados</h2>
     <table id="tabelaPagamentos">
@@ -104,14 +110,11 @@
     let adicionada = parseFloat(localStorage.getItem("saldoVerbaAdicionada")) || 0;
 
     function iniciarPagamento(botao) {
-      const nomeInput = document.getElementById("nome");
-      const valorInput = document.getElementById("valor");
+      const nome = document.getElementById("nome").value.trim();
+      const valor = parseFloat(document.getElementById("valor").value);
 
-      const nome = nomeInput.value.trim();
-      const valor = parseFloat(valorInput.value);
-
-      if(!nome) { alert("Digite seu nome!"); return; }
-      if(isNaN(valor) || valor <= 0) { alert("Digite um valor positivo!"); return; }
+      if(!nome){ alert("Digite seu nome!"); return; }
+      if(isNaN(valor) || valor <= 0){ alert("Digite um valor positivo!"); return; }
 
       addDoc(collection(window.db,"pagamentos"), {
         nome: nome,
@@ -119,50 +122,36 @@
         data: new Date()
       });
 
-      nomeInput.value = "";
-      valorInput.value = "";
+      document.getElementById("nome").value = "";
+      document.getElementById("valor").value = "";
     }
 
     onSnapshot(collection(window.db,"pagamentos"), snapshot => {
       tabelaBody.innerHTML = "";
       let total = 0;
-
       const pagamentos = [];
       snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
-
-      pagamentos.sort((a,b) => new Date(b.data.seconds*1000) - new Date(a.data.seconds*1000));
+      pagamentos.sort((a,b)=> new Date(b.data.seconds*1000) - new Date(a.data.seconds*1000));
 
       pagamentos.forEach(data => {
         const tr = document.createElement("tr");
-
-        const tdNome = document.createElement("td");
-        tdNome.textContent = data.nome || "Anônimo";
-
-        const tdValor = document.createElement("td");
-        tdValor.textContent = data.valor.toFixed(2).replace(".", ",");
-
-        const tdData = document.createElement("td");
-        tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
-
+        tr.innerHTML = `
+          <td>${data.nome || "Anônimo"}</td>
+          <td>${data.valor.toFixed(2).replace(".", ",")}</td>
+          <td>${new Date(data.data.seconds*1000).toLocaleString()}</td>
+        `;
         const tdRemover = document.createElement("td");
         const btnRemover = document.createElement("button");
         btnRemover.textContent = "X";
-        btnRemover.style.color = "red";
-        btnRemover.style.cursor = "pointer";
         btnRemover.onclick = async () => {
           const senha = prompt("Digite a senha ADM para remover:");
-          if(senha === "GCM2026") {
+          if(senha==="GCM2026"){
             await deleteDoc(doc(window.db,"pagamentos",data.id));
             atualizarSaldoVerba();
           } else { alert("Senha incorreta!"); }
-        };
+        }
         tdRemover.appendChild(btnRemover);
-
-        tr.appendChild(tdNome);
-        tr.appendChild(tdValor);
-        tr.appendChild(tdData);
         tr.appendChild(tdRemover);
-
         tabelaBody.appendChild(tr);
         total += data.valor;
       });
@@ -171,14 +160,14 @@
       atualizarSaldoVerba();
     });
 
-    function atualizarSaldoVerba() {
+    function atualizarSaldoVerba(){
       const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
       const saldo = total + adicionada - retirado;
       document.getElementById("saldoADM").textContent = saldo.toFixed(2).replace(".", ",");
     }
 
     // Abas
-    window.openTab = function(tabName, event) {
+    window.openTab = function(tabName, event){
       document.querySelectorAll('.tabcontent').forEach(tab => tab.style.display='none');
       document.querySelectorAll('.tablink').forEach(btn => btn.classList.remove('active'));
       document.getElementById(tabName).style.display='block';
@@ -186,38 +175,35 @@
     }
 
     // ADM
-    window.entrarADM = function() {
+    window.entrarADM = function(){
       const senha = document.getElementById("senhaADM").value;
       if(senha==="GCM2026") document.getElementById("painelADM").style.display="block";
       else alert("Senha incorreta!");
     }
 
-    window.retirarVerba = function() {
+    window.retirarVerba = function(){
       const valor = parseFloat(document.getElementById("retirarValor").value);
-      if(isNaN(valor) || valor<=0){ alert("Digite um valor positivo!"); return; }
-
+      if(isNaN(valor)||valor<=0){ alert("Digite um valor positivo!"); return; }
       const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
-      if(valor > total + adicionada - retirado){ alert("Saldo insuficiente!"); return; }
-
+      if(valor > total+adicionada-retirado){ alert("Saldo insuficiente!"); return; }
       retirado += valor;
       localStorage.setItem("saldoVerbaRetirada", retirado);
       atualizarSaldoVerba();
       document.getElementById("retirarValor").value="";
     }
 
-    window.adicionarVerba = function() {
+    window.adicionarVerba = function(){
       const valor = parseFloat(document.getElementById("adicionarValor").value);
-      if(isNaN(valor) || valor<=0){ alert("Digite um valor positivo!"); return; }
-
+      if(isNaN(valor)||valor<=0){ alert("Digite um valor positivo!"); return; }
       adicionada += valor;
       localStorage.setItem("saldoVerbaAdicionada", adicionada);
       atualizarSaldoVerba();
       document.getElementById("adicionarValor").value="";
     }
   </script>
-
 </body>
 </html>
+
 
 
 
