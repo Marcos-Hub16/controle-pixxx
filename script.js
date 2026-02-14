@@ -4,7 +4,10 @@ from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
 const totalSpan = document.getElementById("total");
 const nomeLogadoSpan = document.getElementById("nomeLogado");
-let saldoVerba = 0;
+
+// Recupera saldo da verba salvo ou inicializa com 0
+let saldoVerba = parseFloat(localStorage.getItem("saldoVerba")) || 0;
+document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 
 // ------------------ LOGIN SIMULADO ------------------
 if(!localStorage.getItem("nomeUsuario")) {
@@ -18,7 +21,7 @@ function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
 
-  // Bloquear negativos
+  // Bloquear números negativos ou zero
   if(isNaN(valor) || valor <= 0) {
     alert("Digite um valor positivo!");
     return;
@@ -62,9 +65,9 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
 
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
-pagamentos.sort((a,b) => {
-  return new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000);
-});
+
+  // Ordenar do mais recente para o mais antigo
+  pagamentos.sort((a,b) => new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000));
 
   pagamentos.forEach(data => {
     const tr = document.createElement("tr");
@@ -76,9 +79,9 @@ pagamentos.sort((a,b) => {
     tdValor.textContent = data.valor.toFixed(2);
 
     const tdData = document.createElement("td");
-    tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
+    tdData.textContent = new Date(data.data.seconds * 1000).toLocaleString();
 
-    // Botão remover
+    // Botão remover com senha ADM
     const tdRemover = document.createElement("td");
     const btnRemover = document.createElement("button");
     btnRemover.textContent = "X";
@@ -100,11 +103,13 @@ pagamentos.sort((a,b) => {
     tr.appendChild(tdRemover);
 
     tabelaBody.appendChild(tr);
+
     total += data.valor;
   });
 
   totalSpan.textContent = total.toFixed(2);
-  saldoVerba = total;
+
+  // Mostrar saldo da verba sem sobrescrever
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 });
 
@@ -139,6 +144,7 @@ function retirarVerba() {
   saldoVerba -= valor;
   if(saldoVerba < 0) saldoVerba = 0;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+  localStorage.setItem("saldoVerba", saldoVerba);
   document.getElementById("retirarValor").value = "";
 }
 
@@ -150,6 +156,8 @@ window.retirarVerba = retirarVerba;
 
 // ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
+
+
 
 
 
