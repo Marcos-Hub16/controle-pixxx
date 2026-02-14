@@ -11,16 +11,6 @@ body {
 .logo {
   width: 120px;
   margin: 20px auto;
-  display: block;
-}
-
-h1 {
-  font-size: 28px;
-  margin-bottom: 5px;
-}
-
-h2, h3 {
-  font-size: 20px;
 }
 
 .card {
@@ -28,84 +18,34 @@ h2, h3 {
   padding: 20px;
   border-radius: 14px;
   max-width: 360px;
-  margin: 20px auto;
+  margin: auto;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
 input, button {
-  width: 100%;
   font-size: 16px;
   padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
 }
 
-button {
-  background: black;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Lista de pagamentos */
-ul {
-  list-style: none;
-  padding: 0;
-  text-align: left;
-  max-width: 360px;
-  margin: 10px auto;
-}
-
-li {
-  background: #fff;
-  padding: 10px;
-  margin-bottom: 6px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* Abas */
 .tabs {
-  max-width: 360px;
-  margin: 0 auto 20px auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  margin: 15px 0;
+  gap: 10px;
 }
 
 .tablink {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: none;
+  padding: 10px 15px;
   background: black;
   color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 8px 8px 0 0;
-  margin-right: 2px;
-}
-
-.tablink:last-child {
-  margin-right: 0;
 }
 
 .tablink.active {
-  background: #333;
-}
-
-/* Botão instalar PWA */
-#installBtn {
-  margin: 20px auto;
-  display: block;
-  font-size: 18px;
-  padding: 12px;
-  border-radius: 8px;
+  background: #FFD700;
+  color: black;
 }
 
 /* Estilo para celular */
@@ -142,17 +82,9 @@ li {
     padding: 14px;
   }
 
-  .tabs {
-    flex-direction: column;
-  }
-
   .tablink {
-    margin-bottom: 5px;
-    border-radius: 8px;
-  }
-
-  .tablink:last-child {
-    margin-bottom: 0;
+    padding: 12px 16px;
+    font-size: 16px;
   }
 }
 
