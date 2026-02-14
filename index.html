@@ -11,13 +11,13 @@
 
   <img src="logo.png" alt="Logo" class="logo">
 
-  <h1>Controle PIX</h1>
+  <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
   <!-- Abas -->
   <div class="tabs">
-    <button class="tablink active" onclick="openTab('enviar')">Enviar Pix</button>
-    <button class="tablink" onclick="openTab('lista')">Lista de Pagamentos</button>
+    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
+    <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
   </div>
 
   <!-- Aba Enviar Pix -->
@@ -33,7 +33,7 @@
   <!-- Aba Lista de Pagamentos -->
   <div id="lista" class="tabcontent" style="display:none;">
     <h2>Pagamentos registrados</h2>
-    <ul id="lista"></ul>
+    <ul id="listaPagamentos"></ul>
     <h3>Total arrecadado: R$ <span id="total">0</span></h3>
   </div>
 
@@ -81,4 +81,5 @@
 
 </body>
 </html>
+
 
