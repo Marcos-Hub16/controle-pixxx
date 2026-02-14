@@ -1,13 +1,13 @@
 import { collection, addDoc, onSnapshot, doc, deleteDoc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+// Elementos
 const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
 const totalSpan = document.getElementById("total");
 const nomeLogadoSpan = document.getElementById("nomeLogado");
 
-// Recupera saldo da verba salvo ou inicializa com 0
-let saldoVerba = parseFloat(localStorage.getItem("saldoVerba")) || 0;
-document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+// ------------------ SALDO DA VERBA ------------------
+let retirado = parseFloat(localStorage.getItem("saldoVerbaRetirada")) || 0;
 
 // ------------------ LOGIN SIMULADO ------------------
 if(!localStorage.getItem("nomeUsuario")) {
@@ -21,7 +21,7 @@ function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
 
-  // Bloquear números negativos ou zero
+  // Bloquear negativos
   if(isNaN(valor) || valor <= 0) {
     alert("Digite um valor positivo!");
     return;
@@ -66,7 +66,7 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
 
-  // Ordenar do mais recente para o mais antigo
+  // Ordena por data decrescente
   pagamentos.sort((a,b) => new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000));
 
   pagamentos.forEach(data => {
@@ -79,9 +79,9 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
     tdValor.textContent = data.valor.toFixed(2);
 
     const tdData = document.createElement("td");
-    tdData.textContent = new Date(data.data.seconds * 1000).toLocaleString();
+    tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
 
-    // Botão remover com senha ADM
+    // Botão remover
     const tdRemover = document.createElement("td");
     const btnRemover = document.createElement("button");
     btnRemover.textContent = "X";
@@ -103,13 +103,13 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
     tr.appendChild(tdRemover);
 
     tabelaBody.appendChild(tr);
-
     total += data.valor;
   });
 
   totalSpan.textContent = total.toFixed(2);
 
-  // Mostrar saldo da verba sem sobrescrever
+  // Atualiza saldo da verba = total - retirado
+  const saldoVerba = total - retirado;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 });
 
@@ -141,11 +141,16 @@ function retirarVerba() {
     alert("Digite um valor positivo!");
     return;
   }
-  saldoVerba -= valor;
-  if(saldoVerba < 0) saldoVerba = 0;
-  document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
-  localStorage.setItem("saldoVerba", saldoVerba);
+
+  retirado += valor;
+  localStorage.setItem("saldoVerbaRetirada", retirado);
+
   document.getElementById("retirarValor").value = "";
+
+  // Atualiza saldo na tela
+  const total = parseFloat(totalSpan.textContent) || 0;
+  const saldoVerba = total - retirado;
+  document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 }
 
 // ------------------ EXPORTAR PARA HTML ------------------
@@ -156,6 +161,7 @@ window.retirarVerba = retirarVerba;
 
 // ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
+
 
 
 
