@@ -1,12 +1,12 @@
 import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const lista = document.getElementById("lista");
+// Lista de pagamentos e total
+const lista = document.getElementById("listaPagamentos");
 const totalSpan = document.getElementById("total");
 
 // Função iniciar pagamento
 function iniciarPagamento(botao) {
   let tempo = 5; // ou 20 segundos
-
   botao.disabled = true;
   botao.textContent = `Aguardando ${tempo}s`;
 
@@ -39,6 +39,7 @@ async function registrar() {
     data: new Date()
   });
 
+  // Limpa os campos
   document.getElementById("nome").value = "";
   document.getElementById("valor").value = "";
 }
@@ -51,6 +52,7 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push(doc.data()));
 
+  // Ordena por nome
   pagamentos.sort((a, b) => a.nome.localeCompare(b.nome));
 
   pagamentos.forEach(data => {
@@ -64,10 +66,11 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   totalSpan.textContent = total.toFixed(2);
 });
 
+// Expondo função global
 window.iniciarPagamento = iniciarPagamento;
 
 // Função das abas
-function openTab(tabName) {
+function openTab(tabName, event) {
   const tabs = document.querySelectorAll('.tabcontent');
   tabs.forEach(tab => tab.style.display = 'none');
 
