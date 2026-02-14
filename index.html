@@ -14,27 +14,31 @@
   <h1>Controle PIX</h1>
   <p>Organize quem pagou</p>
 
- <div class="tabs">
-  <button class="tablink active" onclick="openTab('enviar')">Enviar Pix</button>
-  <button class="tablink" onclick="openTab('lista')">Lista de Pagamentos</button>
-</div>
-
-<!-- Conteúdo das abas -->
-<div id="enviar" class="tabcontent">
-  <div class="card">
-    <input type="text" id="nome" placeholder="Seu nome">
-    <input type="number" id="valor" placeholder="Valor (R$)">
-    <p class="pix">PIX: 88994520224</p>
-    <button onclick="iniciarPagamento(this)">Pagar</button>
+  <!-- Abas -->
+  <div class="tabs">
+    <button class="tablink active" onclick="openTab('enviar')">Enviar Pix</button>
+    <button class="tablink" onclick="openTab('lista')">Lista de Pagamentos</button>
   </div>
-</div>
 
-<div id="lista" class="tabcontent" style="display:none;">
-  <h2>Pagamentos registrados</h2>
-  <ul id="lista"></ul>
-  <h3>Total arrecadado: R$ <span id="total">0</span></h3>
-</div>
+  <!-- Aba Enviar Pix -->
+  <div id="enviar" class="tabcontent">
+    <div class="card">
+      <input type="text" id="nome" placeholder="Seu nome">
+      <input type="number" id="valor" placeholder="Valor (R$)">
+      <p class="pix">PIX: 88994520224</p>
+      <button onclick="iniciarPagamento(this)">Pagar</button>
+    </div>
+  </div>
 
+  <!-- Aba Lista de Pagamentos -->
+  <div id="lista" class="tabcontent" style="display:none;">
+    <h2>Pagamentos registrados</h2>
+    <ul id="lista"></ul>
+    <h3>Total arrecadado: R$ <span id="total">0</span></h3>
+  </div>
+
+  <!-- Botão instalar app -->
+  <button id="installBtn" style="display:none;">📲 Baixar aplicativo</button>
 
   <!-- Firebase -->
   <script type="module">
@@ -54,6 +58,7 @@
     window.db = getFirestore(app);
   </script>
 
+  <!-- Script principal -->
   <script type="module" src="script.js"></script>
 
   <!-- PWA: botão instalar -->
