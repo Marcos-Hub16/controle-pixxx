@@ -62,7 +62,9 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
 
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
-  pagamentos.sort((a,b) => (a.nome || "").localeCompare(b.nome || ""));
+pagamentos.sort((a,b) => {
+  return new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000);
+});
 
   pagamentos.forEach(data => {
     const tr = document.createElement("tr");
