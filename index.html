@@ -55,20 +55,25 @@
     <h3>Total arrecadado: R$ <span id="total">0</span></h3>
   </div>
 
-  <!-- Aba ADM -->
-  <div id="adm" class="tabcontent" style="display:none;">
-    <h2>Painel ADM</h2>
-    <p>Saldo: R$ <span id="saldoADM">0</span></p>
+<!-- Aba ADM -->
+<div id="adm" class="tabcontent" style="display:none;">
+  <h2>Painel ADM</h2>
+  <p>Saldo: R$ <span id="saldoADM">0</span></p>
 
-    <input type="password" id="senhaADM" placeholder="Senha ADM">
-    <button onclick="entrarADM()">Entrar</button>
+  <input type="password" id="senhaADM" placeholder="Senha ADM">
+  <button onclick="entrarADM()">Entrar</button>
 
-    <div id="painelADM" style="display:none;">
-      <h3>Retirar verba</h3>
-      <input type="number" id="retirarValor" placeholder="Quanto retirar?">
-      <button onclick="retirarVerba()">Retirar</button>
-    </div>
+  <div id="painelADM" style="display:none;">
+    <h3>Retirar verba</h3>
+    <input type="number" id="retirarValor" placeholder="Quanto retirar?">
+    <button onclick="retirarVerba()">Retirar</button>
+
+    <h3>Adicionar verba</h3>
+    <input type="number" id="adicionarValor" placeholder="Quanto adicionar?">
+    <button onclick="adicionarVerba()">Adicionar</button>
   </div>
+</div>
+
 
   <!-- Botão instalar app -->
   <button id="installBtn" style="display:none;">📲 Baixar aplicativo</button>
