@@ -10,7 +10,7 @@ body {
 
 .logo {
   width: 120px;
-  margin: 20px auto;
+  margin: 20px auto;\
 }
 
 .card {
@@ -36,16 +36,18 @@ input, button {
 
 .tablink {
   padding: 10px 15px;
-  background: black;
-  color: white;
-  border: none;
+  background: white;      /* cor da aba não selecionada */
+  color: black;           /* texto da aba não selecionada */
+  border: 1px solid black;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
 }
 
 .tablink.active {
-  background: #FFD700;
-  color: black;
+  background: black;      /* cor da aba selecionada */
+  color: white;           /* texto da aba selecionada */
 }
 
 /* Estilo para celular */
