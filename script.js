@@ -115,7 +115,7 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
 
 // ------------------ FUNÇÃO PARA ATUALIZAR SALDO DA VERBA ------------------
 function atualizarSaldoVerba() {
-  const total = parseFloat(totalSpan.textContent) || 0;
+  const total = parseFloat(totalSpan.textContent) || 10;
   const saldoVerba = total - retirado;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 }
