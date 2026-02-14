@@ -15,6 +15,9 @@
   <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
+  <!-- Mostrar usuário logado -->
+  <p id="usuarioLogado">Usuário: <span id="nomeLogado"></span></p>
+
   <!-- Abas -->
   <div class="tabs">
     <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
@@ -25,7 +28,6 @@
   <!-- Aba Enviar Pix -->
   <div id="enviar" class="tabcontent">
     <div class="card">
-      <input type="text" id="nome" placeholder="Seu nome">
       <input type="number" id="valor" placeholder="Valor (R$)">
       <button onclick="iniciarPagamento(this)">Pagar</button>
       <p id="pixChave" style="display:none;">PIX: 88994520224</p>
@@ -41,23 +43,20 @@
 
   <!-- Aba ADM -->
   <div id="adm" class="tabcontent" style="display:none;">
-    <div class="card">
-      <h2>Login ADM</h2>
-      <input type="password" id="senhaADM" placeholder="Senha">
-      <button onclick="entrarADM()">Entrar</button>
+    <h2>Painel ADM</h2>
+    <p>Saldo: R$ <span id="saldoADM">0</span></p>
 
-      <div id="painelADM" style="display:none; margin-top:15px;">
-        <h3>Painel ADM</h3>
+    <input type="password" id="senhaADM" placeholder="Senha ADM">
+    <button onclick="entrarADM()">Entrar</button>
 
-        <h4>Remover pessoa da lista:</h4>
-        <input type="text" id="removerNome" placeholder="Nome da pessoa">
-        <button onclick="removerPessoa()">Remover</button>
+    <div id="painelADM" style="display:none;">
+      <h3>Remover pessoa</h3>
+      <input type="text" id="removerNome" placeholder="Nome da pessoa">
+      <button onclick="removerPessoa()">Remover</button>
 
-        <h4>Verba:</h4>
-        <p>Saldo atual: R$ <span id="saldoADM">0.00</span></p>
-        <input type="number" id="retirarValor" placeholder="Quanto retirar?">
-        <button onclick="retirarVerba()">Retirar</button>
-      </div>
+      <h3>Retirar verba</h3>
+      <input type="number" id="retirarValor" placeholder="Quanto retirar?">
+      <button onclick="retirarVerba()">Retirar</button>
     </div>
   </div>
 
