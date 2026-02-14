@@ -142,15 +142,20 @@ function retirarVerba() {
     return;
   }
 
-  retirado += valor;
-  localStorage.setItem("saldoVerbaRetirada", retirado);
+ const total = parseFloat(totalSpan.textContent) || 0;
 
-  document.getElementById("retirarValor").value = "";
+if(valor > (total - retirado)) {
+  alert("Você não pode retirar mais do que o saldo disponível!");
+  return;
+}
 
-  // Atualiza saldo na tela
-  const total = parseFloat(totalSpan.textContent) || 10;
-  const saldoVerba = total - retirado;
-  document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+retirado += valor;
+localStorage.setItem("saldoVerbaRetirada", retirado);
+
+// Atualiza saldo na tela
+const saldoVerba = total - retirado;
+document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+
 }
 
 // ------------------ EXPORTAR PARA HTML ------------------
