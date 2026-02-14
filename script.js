@@ -41,15 +41,26 @@ async function registrar() {
   document.getElementById("valor").value = "";
 }
 
+// 🔥 Atualização em tempo real + ordenação por nome
 onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   lista.innerHTML = "";
   let total = 0;
 
+  // Coloca todos os pagamentos em um array
+  const pagamentos = [];
   snapshot.forEach(doc => {
-    const data = doc.data();
+    pagamentos.push(doc.data());
+  });
+
+  // Ordena pelo nome (A → Z)
+  pagamentos.sort((a, b) => a.nome.localeCompare(b.nome));
+
+  // Mostra na lista
+  pagamentos.forEach(data => {
     const item = document.createElement("li");
     item.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)}`;
     lista.appendChild(item);
+
     total += data.valor;
   });
 
@@ -58,6 +69,7 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
 
 window.iniciarPagamento = iniciarPagamento;
 
+// 🔹 Função das abas
 function openTab(tabName) {
   // Esconde todas as abas
   const tabs = document.querySelectorAll('.tabcontent');
@@ -74,5 +86,6 @@ function openTab(tabName) {
 
 // Mostrar aba "Enviar Pix" por padrão
 document.getElementById('enviar').style.display = 'block';
+
 
 
