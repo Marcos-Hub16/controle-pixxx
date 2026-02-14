@@ -7,10 +7,7 @@ body {
   padding: 20px;
 }
 
-.logo {
-  width: 120px;
-  margin: 20px auto;
-}
+.logo { width: 120px; margin: 20px auto; }
 
 .card {
   background: white;
@@ -21,10 +18,7 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-input, button {
-  font-size: 16px;
-  padding: 12px;
-}
+input, button { font-size: 16px; padding: 12px; }
 
 .tabs {
   display: flex;
@@ -47,16 +41,6 @@ input, button {
 .tablink.active {
   background: black;
   color: white;
-}
-
-/* Estilo lista pagamentos estilo planilha */
-#listaPagamentos li {
-  list-style: none;
-  background: white;
-  margin: 5px 0;
-  padding: 10px;
-  border-radius: 6px;
-  text-align: left;
 }
 
 /* Responsivo celular */
@@ -82,10 +66,7 @@ input, button {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-#tabelaPagamentos th, #tabelaPagamentos td {
-  padding: 12px;
-  text-align: left;
-}
+#tabelaPagamentos th, #tabelaPagamentos td { padding: 12px; text-align: left; }
 
 #tabelaPagamentos th {
   background: black;
@@ -93,13 +74,10 @@ input, button {
   font-weight: bold;
 }
 
-#tabelaPagamentos tbody tr:nth-child(even) {
-  background: #f5f5f5;
-}
+#tabelaPagamentos tbody tr:nth-child(even) { background: #f5f5f5; }
 
-#tabelaPagamentos tbody tr:hover {
-  background: #e0e0e0;
-}
+#tabelaPagamentos tbody tr:hover { background: #e0e0e0; }
+
 
 
 
