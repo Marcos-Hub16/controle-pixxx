@@ -148,7 +148,7 @@ function retirarVerba() {
   document.getElementById("retirarValor").value = "";
 
   // Atualiza saldo na tela
-  const total = parseFloat(totalSpan.textContent) || 0;
+  const total = parseFloat(totalSpan.textContent) || 10;
   const saldoVerba = total - retirado;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 }
