@@ -140,3 +140,4 @@ window.adicionarVerba = adicionarVerba;
 
 
 
+
