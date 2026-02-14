@@ -1,5 +1,4 @@
 body {
-body {
   font-family: system-ui;
   background: #FFD700; /* fundo amarelo */
   color: black;
@@ -99,7 +98,7 @@ input, button {
   h2,h3 { font-size: 18px; }
   .tablink { padding: 12px 16px; font-size: 16px; }
 }
-
+}
 
 
 
