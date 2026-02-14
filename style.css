@@ -1,1 +1,53 @@
+body {
+  font-family: system-ui;
+  background: #FFD700;
+  color: black;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+}
+
+.logo {
+  width: 120px;
+  margin: 20px auto;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  max-width: 360px;
+  margin: auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
 
