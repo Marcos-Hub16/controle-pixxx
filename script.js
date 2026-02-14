@@ -1,7 +1,6 @@
 import { collection, addDoc, onSnapshot, doc, deleteDoc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Elementos
 const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
 const totalSpan = document.getElementById("total");
 const nomeLogadoSpan = document.getElementById("nomeLogado");
@@ -19,10 +18,14 @@ function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
 
+  // Bloquear negativos
   if(isNaN(valor) || valor <= 0) {
     alert("Digite um valor positivo!");
     return;
   }
+
+  // Mostrar PIX imediatamente
+  document.getElementById("pixChave").style.display = "block";
 
   botao.disabled = true;
   let tempo = 5;
@@ -38,17 +41,12 @@ function iniciarPagamento(botao) {
       botao.disabled = false;
 
       botao.onclick = async () => {
-        // Salva no Firestore
         await addDoc(collection(window.db,"pagamentos"), {
           nome: localStorage.getItem("nomeUsuario"),
           valor: valor,
           data: new Date()
         });
 
-        // Mostra chave PIX
-        document.getElementById("pixChave").style.display = "block";
-
-        // Limpa input e botão
         valorInput.value = "";
         botao.textContent = "Pagar novamente";
         botao.onclick = () => iniciarPagamento(botao);
@@ -64,26 +62,42 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
 
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
-  pagamentos.sort((a,b) => a.nome.localeCompare(b.nome));
+  pagamentos.sort((a,b) => (a.nome || "").localeCompare(b.nome || ""));
 
   pagamentos.forEach(data => {
     const tr = document.createElement("tr");
 
     const tdNome = document.createElement("td");
-    tdNome.textContent = data.nome;
+    tdNome.textContent = data.nome || "Anônimo";
 
     const tdValor = document.createElement("td");
     tdValor.textContent = data.valor.toFixed(2);
 
     const tdData = document.createElement("td");
-    tdData.textContent = new Date(data.data.seconds * 1000).toLocaleString();
+    tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
+
+    // Botão remover
+    const tdRemover = document.createElement("td");
+    const btnRemover = document.createElement("button");
+    btnRemover.textContent = "X";
+    btnRemover.style.color = "red";
+    btnRemover.style.cursor = "pointer";
+    btnRemover.onclick = async () => {
+      const senha = prompt("Digite a senha ADM para remover:");
+      if(senha === "GCM2026") {
+        await deleteDoc(doc(window.db,"pagamentos",data.id));
+      } else {
+        alert("Senha incorreta!");
+      }
+    };
+    tdRemover.appendChild(btnRemover);
 
     tr.appendChild(tdNome);
     tr.appendChild(tdValor);
     tr.appendChild(tdData);
+    tr.appendChild(tdRemover);
 
     tabelaBody.appendChild(tr);
-
     total += data.valor;
   });
 
@@ -114,17 +128,6 @@ function entrarADM() {
   }
 }
 
-async function removerPessoa() {
-  const nome = document.getElementById("removerNome").value;
-  if(!nome) return alert("Digite o nome!");
-  const pagamentosRef = collection(window.db,"pagamentos");
-  const snapshot = await window.db.getDocs(pagamentosRef);
-  snapshot.forEach(async docSnap => {
-    if(docSnap.data().nome === nome) await deleteDoc(doc(window.db,"pagamentos",docSnap.id));
-  });
-  document.getElementById("removerNome").value = "";
-}
-
 function retirarVerba() {
   let valor = parseFloat(document.getElementById("retirarValor").value);
   if(isNaN(valor) || valor <= 0) {
@@ -142,10 +145,10 @@ window.iniciarPagamento = iniciarPagamento;
 window.openTab = openTab;
 window.entrarADM = entrarADM;
 window.retirarVerba = retirarVerba;
-window.removerPessoa = removerPessoa;
 
 // ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
+
 
 
 
