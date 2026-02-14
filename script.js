@@ -58,7 +58,6 @@ function iniciarPagamento(botao) {
   },1000);
 }
 
-// ------------------ LISTA DE PAGAMENTOS ------------------
 onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   tabelaBody.innerHTML = "";
   let total = 0;
@@ -91,6 +90,8 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
       const senha = prompt("Digite a senha ADM para remover:");
       if(senha === "GCM2026") {
         await deleteDoc(doc(window.db,"pagamentos",data.id));
+        // Ao remover alguém, recalcula saldo da verba
+        atualizarSaldoVerba();
       } else {
         alert("Senha incorreta!");
       }
@@ -108,10 +109,17 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
 
   totalSpan.textContent = total.toFixed(2);
 
-  // Atualiza saldo da verba = total - retirado
+  // Atualiza saldo da verba automaticamente
+  atualizarSaldoVerba();
+});
+
+// ------------------ FUNÇÃO PARA ATUALIZAR SALDO DA VERBA ------------------
+function atualizarSaldoVerba() {
+  const total = parseFloat(totalSpan.textContent) || 0;
   const saldoVerba = total - retirado;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
-});
+}
+
 
 // ------------------ ABAS ------------------
 function openTab(tabName, event) {
