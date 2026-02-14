@@ -4,57 +4,32 @@ from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 // Elementos
 const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
 const totalSpan = document.getElementById("total");
-const nomeLogadoSpan = document.getElementById("nomeLogado");
-
-// ------------------ SALDO DA VERBA ------------------
 let retirado = parseFloat(localStorage.getItem("saldoVerbaRetirada")) || 0;
-
-// ------------------ LOGIN SIMULADO ------------------
-if(!localStorage.getItem("nomeUsuario")) {
-  let nome = prompt("Digite seu nome:");
-  if(nome) localStorage.setItem("nomeUsuario", nome);
-}
-nomeLogadoSpan.textContent = localStorage.getItem("nomeUsuario");
 
 // ------------------ PAGAMENTO ------------------
 function iniciarPagamento(botao) {
-  const valorInput = document.getElementById("valor");
-  let valor = parseFloat(valorInput.value);
+  const nome = document.getElementById("nomePagador").value.trim();
+  let valorText = document.getElementById("valor").value.trim();
 
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
+  if(!nome) return alert("Digite o nome da pessoa!");
+  if(!valorText) return alert("Digite o valor!");
 
-  // Mostrar PIX imediatamente
-  document.getElementById("pixChave").style.display = "block";
+  // Converte vírgula para ponto
+  valorText = valorText.replace(",", ".");
+  let valor = parseFloat(valorText);
 
-  botao.disabled = true;
-  let tempo = 5;
-  botao.textContent = `Aguardando ${tempo}s`;
+  if(isNaN(valor) || valor <= 0) return alert("Digite um valor válido!");
 
-  const intervalo = setInterval(() => {
-    tempo--;
-    botao.textContent = `Aguardando ${tempo}s`;
+  // Salvar no Firestore
+  addDoc(collection(window.db,"pagamentos"), {
+    nome: nome,
+    valor: valor,
+    data: new Date()
+  });
 
-    if(tempo <= 0) {
-      clearInterval(intervalo);
-      botao.textContent = "Confirmar pagamento";
-      botao.disabled = false;
-
-      botao.onclick = async () => {
-        await addDoc(collection(window.db,"pagamentos"), {
-          nome: localStorage.getItem("nomeUsuario"),
-          valor: valor,
-          data: new Date()
-        });
-
-        valorInput.value = "";
-        botao.textContent = "Pagar novamente";
-        botao.onclick = () => iniciarPagamento(botao);
-      };
-    }
-  },1000);
+  // Limpar inputs
+  document.getElementById("nomePagador").value = "";
+  document.getElementById("valor").value = "";
 }
 
 // ------------------ LISTA DE PAGAMENTOS ------------------
@@ -75,7 +50,7 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
     tdNome.textContent = data.nome || "Anônimo";
 
     const tdValor = document.createElement("td");
-    tdValor.textContent = data.valor.toFixed(2);
+    tdValor.textContent = data.valor.toFixed(2).replace(".", ",");
 
     const tdData = document.createElement("td");
     tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
@@ -106,17 +81,15 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
     total += data.valor;
   });
 
-  totalSpan.textContent = total.toFixed(2);
-
-  // Atualiza saldo da verba automaticamente
+  totalSpan.textContent = total.toFixed(2).replace(".", ",");
   atualizarSaldoVerba();
 });
 
-// ------------------ FUNÇÃO PARA ATUALIZAR SALDO DA VERBA ------------------
+// ------------------ SALDO DA VERBA ------------------
 function atualizarSaldoVerba() {
-  const total = parseFloat(totalSpan.textContent) || 0;
-  const saldoVerba = total - retirado;
-  document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+  const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
+  const saldo = total - retirado;
+  document.getElementById("saldoADM").textContent = saldo.toFixed(2).replace(".", ",");
 }
 
 // ------------------ ABAS ------------------
@@ -141,37 +114,24 @@ function entrarADM() {
   }
 }
 
-// Retirar verba
 function retirarVerba() {
   let valor = parseFloat(document.getElementById("retirarValor").value);
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
+  if(isNaN(valor) || valor <= 0) return alert("Digite um valor positivo!");
 
-  const total = parseFloat(totalSpan.textContent) || 0;
+  const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
 
-  if(valor > (total - retirado)) {
-    alert("Você não pode retirar mais do que o saldo disponível!");
-    return;
-  }
+  if(valor > (total - retirado)) return alert("Você não pode retirar mais do que o saldo disponível!");
 
   retirado += valor;
   localStorage.setItem("saldoVerbaRetirada", retirado);
-
   atualizarSaldoVerba();
   document.getElementById("retirarValor").value = "";
 }
 
-// Adicionar verba
 function adicionarVerba() {
   let valor = parseFloat(document.getElementById("adicionarValor").value);
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
+  if(isNaN(valor) || valor <= 0) return alert("Digite um valor positivo!");
 
-  // Diminuir retirado aumenta saldo disponível
   retirado -= valor;
   if(retirado < 0) retirado = 0;
 
@@ -187,8 +147,9 @@ window.entrarADM = entrarADM;
 window.retirarVerba = retirarVerba;
 window.adicionarVerba = adicionarVerba;
 
-// ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
+// ------------------ ABRIR ABA ENVIAR POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
+
 
 
 
