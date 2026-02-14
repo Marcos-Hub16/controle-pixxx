@@ -1,18 +1,20 @@
-import { collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc } 
+import { collection, addDoc, onSnapshot, doc, deleteDoc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const lista = document.getElementById("listaPagamentos");
+// Elementos
+const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
 const totalSpan = document.getElementById("total");
+const nomeLogadoSpan = document.getElementById("nomeLogado");
 let saldoVerba = 0;
 
-// -------- LOGIN SIMULADO --------
+// ------------------ LOGIN SIMULADO ------------------
 if(!localStorage.getItem("nomeUsuario")) {
   let nome = prompt("Digite seu nome:");
   if(nome) localStorage.setItem("nomeUsuario", nome);
 }
-document.getElementById("nomeLogado").textContent = localStorage.getItem("nomeUsuario");
+nomeLogadoSpan.textContent = localStorage.getItem("nomeUsuario");
 
-// -------- PAGAMENTO --------
+// ------------------ PAGAMENTO ------------------
 function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
@@ -34,53 +36,82 @@ function iniciarPagamento(botao) {
       clearInterval(intervalo);
       botao.textContent = "Confirmar pagamento";
       botao.disabled = false;
+
       botao.onclick = async () => {
+        // Salva no Firestore
         await addDoc(collection(window.db,"pagamentos"), {
           nome: localStorage.getItem("nomeUsuario"),
           valor: valor,
           data: new Date()
         });
+
+        // Mostra chave PIX
         document.getElementById("pixChave").style.display = "block";
+
+        // Limpa input e botão
         valorInput.value = "";
+        botao.textContent = "Pagar novamente";
+        botao.onclick = () => iniciarPagamento(botao);
       };
     }
   },1000);
 }
 
-// -------- LISTA DE PAGAMENTOS --------
+// ------------------ LISTA DE PAGAMENTOS ------------------
 onSnapshot(collection(window.db,"pagamentos"), snapshot => {
-  lista.innerHTML = "";
+  tabelaBody.innerHTML = "";
   let total = 0;
+
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
   pagamentos.sort((a,b) => a.nome.localeCompare(b.nome));
+
   pagamentos.forEach(data => {
-    const li = document.createElement("li");
-    li.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)} - ${data.data.toLocaleString()}`;
-    lista.appendChild(li);
+    const tr = document.createElement("tr");
+
+    const tdNome = document.createElement("td");
+    tdNome.textContent = data.nome;
+
+    const tdValor = document.createElement("td");
+    tdValor.textContent = data.valor.toFixed(2);
+
+    const tdData = document.createElement("td");
+    tdData.textContent = new Date(data.data.seconds * 1000).toLocaleString();
+
+    tr.appendChild(tdNome);
+    tr.appendChild(tdValor);
+    tr.appendChild(tdData);
+
+    tabelaBody.appendChild(tr);
+
     total += data.valor;
   });
+
   totalSpan.textContent = total.toFixed(2);
   saldoVerba = total;
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 });
 
-// -------- ABAS --------
+// ------------------ ABAS ------------------
 function openTab(tabName, event) {
   const tabs = document.querySelectorAll('.tabcontent');
   tabs.forEach(tab => tab.style.display = 'none');
+
   const buttons = document.querySelectorAll('.tablink');
   buttons.forEach(btn => btn.classList.remove('active'));
+
   document.getElementById(tabName).style.display = 'block';
   if(event) event.currentTarget.classList.add('active');
 }
 
-// -------- ADM --------
+// ------------------ ADM ------------------
 function entrarADM() {
   const senha = document.getElementById("senhaADM").value;
   if(senha === "GCM2026") {
     document.getElementById("painelADM").style.display = "block";
-  } else alert("Senha incorreta!");
+  } else {
+    alert("Senha incorreta!");
+  }
 }
 
 async function removerPessoa() {
@@ -106,14 +137,14 @@ function retirarVerba() {
   document.getElementById("retirarValor").value = "";
 }
 
-// -------- EXPORTAR FUNÇÕES --------
+// ------------------ EXPORTAR PARA HTML ------------------
 window.iniciarPagamento = iniciarPagamento;
 window.openTab = openTab;
 window.entrarADM = entrarADM;
 window.retirarVerba = retirarVerba;
 window.removerPessoa = removerPessoa;
 
-// -------- ABRIR ABA ENVIAR PIX POR PADRÃO --------
+// ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
 
 
