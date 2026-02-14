@@ -18,10 +18,10 @@
   <!-- Aba Login -->
   <div id="login" class="tabcontent">
     <div class="card">
-      <input type="text" id="loginNome" placeholder="Seu nome">
+      <input type="text" id="loginNome" placeholder="Nome">
       <input type="password" id="loginSenha" placeholder="Senha">
       <button onclick="entrar()">Entrar</button>
-      <p id="loginMsg"></p>
+      <p id="loginMsg" style="color:red;"></p>
     </div>
   </div>
 
@@ -29,6 +29,7 @@
   <div class="tabs" style="display:none;">
     <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
+    <button class="tablink" onclick="openTab('adm', event)">ADM</button>
   </div>
 
   <!-- Aba Enviar Pix -->
@@ -45,6 +46,13 @@
     <h2>Pagamentos registrados</h2>
     <ul id="listaPagamentos"></ul>
     <h3>Total arrecadado: R$ <span id="total">0</span></h3>
+  </div>
+
+  <!-- Aba ADM -->
+  <div id="adm" class="tabcontent" style="display:none;">
+    <h2>Painel ADM</h2>
+    <ul id="listaADM"></ul>
+    <h3>Verba total: R$ <span id="totalADM">0</span></h3>
   </div>
 
   <!-- Botão instalar app -->
@@ -91,6 +99,7 @@
 
 </body>
 </html>
+
 
 
 
