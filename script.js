@@ -57,12 +57,29 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   // Ordena alfabeticamente pelo nome
   pagamentos.sort((a, b) => a.nome.localeCompare(b.nome));
 
-  pagamentos.forEach(data => {
+pagamentos.forEach(data => {
     const item = document.createElement("li");
-    item.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)}`;
+
+    // Formata a data e hora
+    const dataHora = new Date(data.data.seconds * 1000 || data.data); // firebase timestamp ou Date normal
+    const dia = String(dataHora.getDate()).padStart(2, '0');
+    const mes = String(dataHora.getMonth() + 1).padStart(2, '0');
+    const ano = dataHora.getFullYear();
+    const horas = String(dataHora.getHours()).padStart(2, '0');
+    const minutos = String(dataHora.getMinutes()).padStart(2, '0');
+    const dataFormatada = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+
+    // Mostra Nome | Valor | DataHora
+    item.innerHTML = `
+      <span>${data.nome}</span>
+      <span>R$ ${data.valor.toFixed(2)}</span>
+      <span>${dataFormatada}</span>
+    `;
     lista.appendChild(item);
+
     total += data.valor;
-  });
+});
+
 
   totalSpan.textContent = total.toFixed(2);
 });
