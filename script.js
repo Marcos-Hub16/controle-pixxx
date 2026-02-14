@@ -21,7 +21,6 @@ function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
 
-  // Bloquear negativos
   if(isNaN(valor) || valor <= 0) {
     alert("Digite um valor positivo!");
     return;
@@ -58,6 +57,7 @@ function iniciarPagamento(botao) {
   },1000);
 }
 
+// ------------------ LISTA DE PAGAMENTOS ------------------
 onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   tabelaBody.innerHTML = "";
   let total = 0;
@@ -66,7 +66,7 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
 
   // Ordena por data decrescente
-  pagamentos.sort((a,b) => new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000));
+  pagamentos.sort((a,b) => new Date(b.data.seconds*1000) - new Date(a.data.seconds*1000));
 
   pagamentos.forEach(data => {
     const tr = document.createElement("tr");
@@ -90,7 +90,6 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
       const senha = prompt("Digite a senha ADM para remover:");
       if(senha === "GCM2026") {
         await deleteDoc(doc(window.db,"pagamentos",data.id));
-        // Ao remover alguém, recalcula saldo da verba
         atualizarSaldoVerba();
       } else {
         alert("Senha incorreta!");
@@ -120,7 +119,6 @@ function atualizarSaldoVerba() {
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 }
 
-
 // ------------------ ABAS ------------------
 function openTab(tabName, event) {
   const tabs = document.querySelectorAll('.tabcontent');
@@ -143,6 +141,7 @@ function entrarADM() {
   }
 }
 
+// Retirar verba
 function retirarVerba() {
   let valor = parseFloat(document.getElementById("retirarValor").value);
   if(isNaN(valor) || valor <= 0) {
@@ -150,20 +149,35 @@ function retirarVerba() {
     return;
   }
 
- const total = parseFloat(totalSpan.textContent) || 0;
+  const total = parseFloat(totalSpan.textContent) || 0;
 
-if(valor > (total - retirado)) {
-  alert("Você não pode retirar mais do que o saldo disponível!");
-  return;
+  if(valor > (total - retirado)) {
+    alert("Você não pode retirar mais do que o saldo disponível!");
+    return;
+  }
+
+  retirado += valor;
+  localStorage.setItem("saldoVerbaRetirada", retirado);
+
+  atualizarSaldoVerba();
+  document.getElementById("retirarValor").value = "";
 }
 
-retirado += valor;
-localStorage.setItem("saldoVerbaRetirada", retirado);
+// Adicionar verba
+function adicionarVerba() {
+  let valor = parseFloat(document.getElementById("adicionarValor").value);
+  if(isNaN(valor) || valor <= 0) {
+    alert("Digite um valor positivo!");
+    return;
+  }
 
-// Atualiza saldo na tela
-const saldoVerba = total - retirado;
-document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
+  // Diminuir retirado aumenta saldo disponível
+  retirado -= valor;
+  if(retirado < 0) retirado = 0;
 
+  localStorage.setItem("saldoVerbaRetirada", retirado);
+  atualizarSaldoVerba();
+  document.getElementById("adicionarValor").value = "";
 }
 
 // ------------------ EXPORTAR PARA HTML ------------------
@@ -171,9 +185,11 @@ window.iniciarPagamento = iniciarPagamento;
 window.openTab = openTab;
 window.entrarADM = entrarADM;
 window.retirarVerba = retirarVerba;
+window.adicionarVerba = adicionarVerba;
 
 // ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
 document.getElementById('enviar').style.display = 'block';
+
 
 
 
