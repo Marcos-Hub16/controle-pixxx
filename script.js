@@ -58,4 +58,21 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
 
 window.iniciarPagamento = iniciarPagamento;
 
+function openTab(tabName) {
+  // Esconde todas as abas
+  const tabs = document.querySelectorAll('.tabcontent');
+  tabs.forEach(tab => tab.style.display = 'none');
+
+  // Remove active de todos os botões
+  const buttons = document.querySelectorAll('.tablink');
+  buttons.forEach(btn => btn.classList.remove('active'));
+
+  // Mostra a aba selecionada
+  document.getElementById(tabName).style.display = 'block';
+  event.currentTarget.classList.add('active');
+}
+
+// Mostrar aba "Enviar Pix" por padrão
+document.getElementById('enviar').style.display = 'block';
+
 
