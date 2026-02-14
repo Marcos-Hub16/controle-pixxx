@@ -89,5 +89,18 @@ input, button {
     font-size: 16px;
   }
 }
+#listaPagamentos li {
+  background: white;
+  padding: 12px 15px;
+  margin: 8px 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr; /* Nome | Valor | DataHora */
+  gap: 10px;
+  align-items: center;
+  font-weight: bold;
+  font-size: 14px;
+}
 
 
