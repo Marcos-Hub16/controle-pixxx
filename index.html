@@ -15,19 +15,28 @@
   <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
-  <!-- Abas -->
-  <div class="tabs">
+  <!-- Aba Login -->
+  <div id="login" class="tabcontent">
+    <div class="card">
+      <input type="text" id="loginNome" placeholder="Seu nome">
+      <input type="password" id="loginSenha" placeholder="Senha">
+      <button onclick="entrar()">Entrar</button>
+      <p id="loginMsg"></p>
+    </div>
+  </div>
+
+  <!-- Abas (escondidas até login) -->
+  <div class="tabs" style="display:none;">
     <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
   </div>
 
   <!-- Aba Enviar Pix -->
-  <div id="enviar" class="tabcontent">
+  <div id="enviar" class="tabcontent" style="display:none;">
     <div class="card">
-      <input type="text" id="nome" placeholder="Seu nome">
       <input type="number" id="valor" placeholder="Valor (R$)">
-      <p class="pix">PIX: 88994520224</p>
-      <button onclick="iniciarPagamento(this)">Pagar</button>
+      <button id="btnPagar" onclick="iniciarPagamento(this)">Pagar</button>
+      <p class="pix" id="chavePix" style="display:none;">PIX: 88994520224</p>
     </div>
   </div>
 
