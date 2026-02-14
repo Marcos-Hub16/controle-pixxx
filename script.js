@@ -1,36 +1,30 @@
-let total = 0;
-let tempo = 20;
-let contando = false;
+import { collection, addDoc, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const lista = document.getElementById("lista");
+const totalSpan = document.getElementById("total");
 
 function iniciarPagamento(botao) {
-  if (contando) return;
+  let tempo = 5; // pode mudar depois para 20
 
-  contando = true;
-  tempo = 20;
   botao.disabled = true;
+  botao.textContent = `Aguardando ${tempo}s`;
 
   const intervalo = setInterval(() => {
-    botao.textContent = `Aguarde ${tempo}s`;
     tempo--;
+    botao.textContent = `Aguardando ${tempo}s`;
 
-    if (tempo < 0) {
+    if (tempo <= 0) {
       clearInterval(intervalo);
       botao.textContent = "Já paguei";
       botao.disabled = false;
-      contando = false;
 
-      botao.onclick = function () {
-        registrar();
-        botao.textContent = "Pagar";
-        botao.onclick = function () {
-          iniciarPagamento(botao);
-        };
-      };
+      botao.onclick = () => registrar();
     }
   }, 1000);
 }
 
-function registrar() {
+async function registrar() {
   const nome = document.getElementById("nome").value;
   const valor = parseFloat(document.getElementById("valor").value);
 
@@ -39,35 +33,34 @@ function registrar() {
     return;
   }
 
-  const lista = document.getElementById("lista");
-  const item = document.createElement("li");
-
-  item.textContent = `${nome} pagou R$ ${valor.toFixed(2)}`;
-  lista.appendChild(item);
-
-  total += valor;
-  document.getElementById("total").textContent = total.toFixed(2);
+  await addDoc(collection(window.db, "pagamentos"), {
+    nome: nome,
+    valor: valor,
+    data: new Date()
+  });
 
   document.getElementById("nome").value = "";
   document.getElementById("valor").value = "";
 }
-let deferredPrompt;
 
-window.addEventListener("DOMContentLoaded", () => {
-  const installBtn = document.getElementById("installBtn");
+// 🔥 Atualização em tempo real
+onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
+  lista.innerHTML = "";
+  let total = 0;
 
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    installBtn.style.display = "block";
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    const item = document.createElement("li");
+
+    item.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)}`;
+    lista.appendChild(item);
+
+    total += data.valor;
   });
 
-  installBtn.addEventListener("click", async () => {
-    installBtn.style.display = "none";
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  });
+  totalSpan.textContent = total.toFixed(2);
 });
+
+window.iniciarPagamento = iniciarPagamento;
 
 
