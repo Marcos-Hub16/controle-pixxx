@@ -1,4 +1,4 @@
-/* Estilo padrão (PC) */
+/* ------------------ Estilo padrão (PC) ------------------ */
 body {
   font-family: system-ui;
   background: #FFD700;
@@ -8,6 +8,24 @@ body {
   padding: 20px;
 }
 
+/* Logo */
+.logo {
+  width: 25%;       /* ocupa 25% da largura da tela */
+  max-width: 120px; /* nunca passa de 120px */
+  height: auto;     /* mantém proporção */
+  margin: 20px auto;
+}
+
+/* Títulos */
+h1 {
+  font-size: 26px;
+}
+
+h2, h3 {
+  font-size: 20px;
+}
+
+/* Card de pagamento */
 .card {
   background: white;
   padding: 20px;
@@ -17,20 +35,96 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
+/* Inputs e botões */
 input, button {
   font-size: 16px;
   padding: 12px;
+  width: 100%;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
-/* Estilo para celular */
+button {
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Lista de pagamentos */
+ul {
+  list-style: none;
+  padding: 0;
+  max-width: 360px;
+  margin: 10px auto;
+  text-align: left;
+}
+
+/* Abas */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.tablink {
+  background: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 8px 8px 0 0;
+  margin: 0 2px;
+}
+
+.tablink.active {
+  background: #333;
+}
+
+.tabcontent {
+  display: none; /* escondida por padrão */
+}
+
+/* Botão instalar app */
+#installBtn {
+  width: 200px;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 15px auto;
+  display: block;
+}
+
+/* ------------------ Estilo para celular ------------------ */
 @media only screen and (max-width: 480px) {
   body {
     padding: 10px;
   }
 
   .logo {
-    width: 100px;
+    width: 35%;      /* ocupa mais da tela pequena */
+    max-width: 100px; /* nunca passa de 100px */
     margin: 10px auto;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  h2, h3 {
+    font-size: 18px;
   }
 
   .card {
@@ -43,18 +137,10 @@ input, button {
     padding: 14px;
   }
 
-  h1 {
-    font-size: 22px;
-  }
-
-  h2, h3 {
-    font-size: 18px;
-  }
-
   #installBtn {
     font-size: 20px;
     padding: 14px;
+    width: 90%;
   }
 }
-
 
