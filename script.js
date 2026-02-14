@@ -1,11 +1,10 @@
-import { collection, addDoc, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const lista = document.getElementById("lista");
 const totalSpan = document.getElementById("total");
 
 function iniciarPagamento(botao) {
-  let tempo = 5; // pode mudar depois para 20
+  let tempo = 5; // ou 20 segundos
 
   botao.disabled = true;
   botao.textContent = `Aguardando ${tempo}s`;
@@ -18,7 +17,6 @@ function iniciarPagamento(botao) {
       clearInterval(intervalo);
       botao.textContent = "Já paguei";
       botao.disabled = false;
-
       botao.onclick = () => registrar();
     }
   }, 1000);
@@ -43,7 +41,6 @@ async function registrar() {
   document.getElementById("valor").value = "";
 }
 
-// 🔥 Atualização em tempo real
 onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   lista.innerHTML = "";
   let total = 0;
@@ -51,10 +48,8 @@ onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   snapshot.forEach(doc => {
     const data = doc.data();
     const item = document.createElement("li");
-
     item.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)}`;
     lista.appendChild(item);
-
     total += data.valor;
   });
 
