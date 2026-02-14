@@ -1,15 +1,53 @@
-import { collection, addDoc, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Elementos da lista e total
 const lista = document.getElementById("listaPagamentos");
 const totalSpan = document.getElementById("total");
+const chavePix = document.getElementById("chavePix");
 
-// Função iniciar pagamento com contagem regressiva
+// --- LOGIN LOCAL ---
+function entrar() {
+  const nome = document.getElementById("loginNome").value;
+  const senha = document.getElementById("loginSenha").value;
+  const msg = document.getElementById("loginMsg");
+
+  if (!nome || !senha) {
+    msg.textContent = "Preencha todos os campos!";
+    return;
+  }
+
+  const userSalvo = JSON.parse(localStorage.getItem("usuarioApp"));
+
+  if (userSalvo) {
+    if (userSalvo.senha === senha) {
+      iniciarApp(userSalvo.nome);
+    } else {
+      msg.textContent = "Senha incorreta!";
+    }
+  } else {
+    localStorage.setItem("usuarioApp", JSON.stringify({ nome, senha }));
+    iniciarApp(nome);
+  }
+}
+
+function iniciarApp(nomeUsuario) {
+  document.getElementById("login").style.display = "none";
+  document.querySelector(".tabs").style.display = "flex";
+  document.getElementById("enviar").style.display = "block";
+  alert(`Bem-vindo(a), ${nomeUsuario}!`);
+}
+
+// --- PAGAMENTO ---
 function iniciarPagamento(botao) {
-  let tempo = 5; // você pode aumentar para 20 segundos
+  const valor = parseFloat(document.getElementById("valor").value);
+  if (!valor || valor <= 0) {
+    alert("Digite um valor válido!");
+    return;
+  }
+
   botao.disabled = true;
+  let tempo = 5; // contagem regressiva
   botao.textContent = `Aguardando ${tempo}s`;
+  chavePix.style.display = "none";
 
   const intervalo = setInterval(() => {
     tempo--;
@@ -19,92 +57,63 @@ function iniciarPagamento(botao) {
       clearInterval(intervalo);
       botao.textContent = "Já paguei";
       botao.disabled = false;
-      botao.onclick = () => registrar(); // Após contagem, registra pagamento
+      chavePix.style.display = "block";
+
+      // Salva no Firebase
+      addDoc(collection(window.db, "pagamentos"), {
+        nome: JSON.parse(localStorage.getItem("usuarioApp")).nome,
+        valor: valor,
+        data: new Date()
+      });
+
+      document.getElementById("valor").value = "";
     }
   }, 1000);
 }
 
-// Função para registrar pagamento no Firebase
-async function registrar() {
-  const nome = document.getElementById("nome").value;
-  const valor = parseFloat(document.getElementById("valor").value);
-
-  if (!nome || !valor) {
-    alert("Preencha todos os campos!");
-    return;
-  }
-
-  // Adiciona documento na coleção "pagamentos"
-  await addDoc(collection(window.db, "pagamentos"), {
-    nome: nome,
-    valor: valor,
-    data: new Date()
-  });
-
-  // Limpa campos
-  document.getElementById("nome").value = "";
-  document.getElementById("valor").value = "";
-}
-
-// Atualização em tempo real da lista + ordenação por nome
+// --- LISTA DE PAGAMENTOS ---
 onSnapshot(collection(window.db, "pagamentos"), (snapshot) => {
   lista.innerHTML = "";
   let total = 0;
 
   const pagamentos = [];
   snapshot.forEach(doc => pagamentos.push(doc.data()));
+  pagamentos.sort((a,b)=> a.nome.localeCompare(b.nome));
 
-  // Ordena alfabeticamente pelo nome
-  pagamentos.sort((a, b) => a.nome.localeCompare(b.nome));
-
-pagamentos.forEach(data => {
-    const item = document.createElement("li");
-
-    // Formata a data e hora
-    const dataHora = new Date(data.data.seconds * 1000 || data.data); // firebase timestamp ou Date normal
-    const dia = String(dataHora.getDate()).padStart(2, '0');
-    const mes = String(dataHora.getMonth() + 1).padStart(2, '0');
-    const ano = dataHora.getFullYear();
-    const horas = String(dataHora.getHours()).padStart(2, '0');
-    const minutos = String(dataHora.getMinutes()).padStart(2, '0');
-    const dataFormatada = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
-
-    // Mostra Nome | Valor | DataHora
-    item.innerHTML = `
-      <span>${data.nome}</span>
-      <span>R$ ${data.valor.toFixed(2)}</span>
-      <span>${dataFormatada}</span>
-    `;
-    lista.appendChild(item);
+  pagamentos.forEach(data => {
+    const li = document.createElement("li");
+    const dataHora = new Date(data.data.seconds*1000).toLocaleString("pt-BR");
+    li.textContent = `${data.nome} pagou R$ ${data.valor.toFixed(2)} - ${dataHora}`;
+    li.style.background = "white";
+    li.style.margin = "5px 0";
+    li.style.padding = "8px";
+    li.style.borderRadius = "8px";
+    lista.appendChild(li);
 
     total += data.valor;
-});
-
+  });
 
   totalSpan.textContent = total.toFixed(2);
 });
 
-// Função para alternar abas
+// --- ABAS ---
 function openTab(tabName, event) {
-  // Esconde todas as abas
-  const tabs = document.querySelectorAll('.tabcontent');
-  tabs.forEach(tab => tab.style.display = 'none');
+  const tabs = document.querySelectorAll(".tabcontent");
+  tabs.forEach(tab => tab.style.display = "none");
 
-  // Remove active de todos os botões
-  const buttons = document.querySelectorAll('.tablink');
-  buttons.forEach(btn => btn.classList.remove('active'));
+  const buttons = document.querySelectorAll(".tablink");
+  buttons.forEach(btn => btn.classList.remove("active"));
 
-  // Mostra a aba selecionada
-  document.getElementById(tabName).style.display = 'block';
-  if(event) event.currentTarget.classList.add('active');
+  document.getElementById(tabName).style.display = "block";
+  if(event) event.currentTarget.classList.add("active");
 }
 
-// Mostrar aba "Enviar Pix" por padrão
-document.getElementById('enviar').style.display = 'block';
+document.getElementById("enviar").style.display = "block";
 
-// Tornar funções globais para HTML poder chamar
 window.iniciarPagamento = iniciarPagamento;
 window.openTab = openTab;
+window.entrar = entrar;
+
 
 
 
