@@ -5,13 +5,14 @@ const lista = document.getElementById("listaPagamentos");
 const totalSpan = document.getElementById("total");
 let saldoVerba = 0;
 
-// ------------------ LOGIN SIMULADO ------------------
+// -------- LOGIN SIMULADO --------
 if(!localStorage.getItem("nomeUsuario")) {
   let nome = prompt("Digite seu nome:");
   if(nome) localStorage.setItem("nomeUsuario", nome);
 }
+document.getElementById("nomeLogado").textContent = localStorage.getItem("nomeUsuario");
 
-// ------------------ PAGAMENTO ------------------
+// -------- PAGAMENTO --------
 function iniciarPagamento(botao) {
   const valorInput = document.getElementById("valor");
   let valor = parseFloat(valorInput.value);
@@ -28,6 +29,7 @@ function iniciarPagamento(botao) {
   const intervalo = setInterval(() => {
     tempo--;
     botao.textContent = `Aguardando ${tempo}s`;
+
     if(tempo <= 0) {
       clearInterval(intervalo);
       botao.textContent = "Confirmar pagamento";
@@ -45,7 +47,7 @@ function iniciarPagamento(botao) {
   },1000);
 }
 
-// ------------------ LISTA DE PAGAMENTOS ------------------
+// -------- LISTA DE PAGAMENTOS --------
 onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   lista.innerHTML = "";
   let total = 0;
@@ -63,7 +65,7 @@ onSnapshot(collection(window.db,"pagamentos"), snapshot => {
   document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2);
 });
 
-// ------------------ ABAS ------------------
+// -------- ABAS --------
 function openTab(tabName, event) {
   const tabs = document.querySelectorAll('.tabcontent');
   tabs.forEach(tab => tab.style.display = 'none');
@@ -73,14 +75,12 @@ function openTab(tabName, event) {
   if(event) event.currentTarget.classList.add('active');
 }
 
-// ------------------ ADM ------------------
+// -------- ADM --------
 function entrarADM() {
   const senha = document.getElementById("senhaADM").value;
   if(senha === "GCM2026") {
     document.getElementById("painelADM").style.display = "block";
-  } else {
-    alert("Senha incorreta!");
-  }
+  } else alert("Senha incorreta!");
 }
 
 async function removerPessoa() {
@@ -106,15 +106,17 @@ function retirarVerba() {
   document.getElementById("retirarValor").value = "";
 }
 
-// ------------------ EXPORTAR PARA HTML ------------------
+// -------- EXPORTAR FUNÇÕES --------
 window.iniciarPagamento = iniciarPagamento;
 window.openTab = openTab;
 window.entrarADM = entrarADM;
 window.retirarVerba = retirarVerba;
 window.removerPessoa = removerPessoa;
 
-// ------------------ ABRIR ABA ENVIAR PIX POR PADRÃO ------------------
+// -------- ABRIR ABA ENVIAR PIX POR PADRÃO --------
 document.getElementById('enviar').style.display = 'block';
+
+
 
 
 
