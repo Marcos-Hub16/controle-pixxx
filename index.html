@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle PIX</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA (opcional, mas recomendado) -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#FFD700">
+</head>
+<body>
+
+  <img src="logo.png" alt="Logo" class="logo">
+
+  <h1>Controle PIX</h1>
+  <p>Organize quem pagou</p>
+
+  <div class="card">
+    <input type="text" id="nome" placeholder="Seu nome">
+    <input type="number" id="valor" placeholder="Valor (R$)">
+
+    <p class="pix">PIX: SUA-CHAVE-PIX-AQUI</p>
+
+    <button onclick="iniciarPagamento(this)">Pagar</button>
+  </div>
+
+  <h2>Pagamentos registrados</h2>
+  <ul id="lista"></ul>
+
+  <h3>Total arrecadado: R$ <span id="total">0</span></h3>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+</body>
+</html>
 
