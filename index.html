@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Protagonismo</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#FFD700">
 </head>
 <body>
 
@@ -17,38 +15,34 @@
 
   <!-- Abas -->
   <div class="tabs">
-    <button class="tablink active" onclick="openTab('enviar', event)">Registrar Pagamento</button>
+    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
     <button class="tablink" onclick="openTab('adm', event)">ADM</button>
   </div>
 
-  <!-- Aba Enviar -->
+  <!-- Aba Enviar Pix -->
   <div id="enviar" class="tabcontent">
     <div class="card">
-      <input type="text" id="nomePagador" placeholder="Nome da pessoa">
-      <input type="text" id="valor" placeholder="Valor (R$)">
-      <button onclick="iniciarPagamento(this)">Registrar pagamento</button>
+      <input type="text" id="nomeUsuario" placeholder="Digite seu nome">
+      <input type="text" id="valor" placeholder="Valor (ex: 2,00)">
+      <button onclick="iniciarPagamento(this)">Pagar</button>
+      <p id="pixChave" style="display:none;">PIX: 88994520224</p>
     </div>
   </div>
 
   <!-- Aba Lista de Pagamentos -->
   <div id="lista" class="tabcontent" style="display:none;">
     <h2>Pagamentos registrados</h2>
-
     <table id="tabelaPagamentos">
       <thead>
         <tr>
           <th>Nome</th>
           <th>Valor (R$)</th>
           <th>Data/Hora</th>
-          <th>Remover</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Linhas preenchidas pelo JS -->
-      </tbody>
+      <tbody></tbody>
     </table>
-
     <h3>Total arrecadado: R$ <span id="total">0,00</span></h3>
   </div>
 
@@ -94,6 +88,7 @@
 
 </body>
 </html>
+
 
 
 
