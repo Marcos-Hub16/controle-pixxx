@@ -49,24 +49,24 @@ input, button {
   color: white;
 }
 
-/* Lista de pagamentos estilo planilha */
+/* Estilo lista pagamentos estilo planilha */
 #listaPagamentos li {
+  list-style: none;
   background: white;
   margin: 5px 0;
   padding: 10px;
-  border-radius: 8px;
-  list-style: none;
+  border-radius: 6px;
   text-align: left;
 }
 
-/* Estilo para celular */
+/* Responsivo celular */
 @media only screen and (max-width: 480px) {
   body { padding: 10px; }
   .logo { width: 100px; margin: 10px auto; }
   .card { padding: 15px; max-width: 95%; }
   input, button { font-size: 18px; padding: 14px; }
   h1 { font-size: 22px; }
-  h2, h3 { font-size: 18px; }
+  h2,h3 { font-size: 18px; }
   #installBtn { font-size: 20px; padding: 14px; }
   .tablink { padding: 12px 16px; font-size: 16px; }
 }
