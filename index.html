@@ -15,29 +15,20 @@
   <h1>Protagonismo</h1>
   <p>Organize quem pagou</p>
 
-  <!-- Aba Login -->
-  <div id="login" class="tabcontent">
-    <div class="card">
-      <input type="text" id="loginNome" placeholder="Nome">
-      <input type="password" id="loginSenha" placeholder="Senha">
-      <button onclick="entrar()">Entrar</button>
-      <p id="loginMsg" style="color:red;"></p>
-    </div>
-  </div>
-
-  <!-- Abas (escondidas até login) -->
-  <div class="tabs" style="display:none;">
+  <!-- Abas -->
+  <div class="tabs">
     <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pix</button>
     <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
     <button class="tablink" onclick="openTab('adm', event)">ADM</button>
   </div>
 
   <!-- Aba Enviar Pix -->
-  <div id="enviar" class="tabcontent" style="display:none;">
+  <div id="enviar" class="tabcontent">
     <div class="card">
+      <input type="text" id="nome" placeholder="Seu nome">
       <input type="number" id="valor" placeholder="Valor (R$)">
-      <button id="btnPagar" onclick="iniciarPagamento(this)">Pagar</button>
-      <p class="pix" id="chavePix" style="display:none;">PIX: 88994520224</p>
+      <button onclick="iniciarPagamento(this)">Pagar</button>
+      <p id="pixChave" style="display:none;">PIX: 88994520224</p>
     </div>
   </div>
 
@@ -50,9 +41,24 @@
 
   <!-- Aba ADM -->
   <div id="adm" class="tabcontent" style="display:none;">
-    <h2>Painel ADM</h2>
-    <ul id="listaADM"></ul>
-    <h3>Verba total: R$ <span id="totalADM">0</span></h3>
+    <div class="card">
+      <h2>Login ADM</h2>
+      <input type="password" id="senhaADM" placeholder="Senha">
+      <button onclick="entrarADM()">Entrar</button>
+
+      <div id="painelADM" style="display:none; margin-top:15px;">
+        <h3>Painel ADM</h3>
+
+        <h4>Remover pessoa da lista:</h4>
+        <input type="text" id="removerNome" placeholder="Nome da pessoa">
+        <button onclick="removerPessoa()">Remover</button>
+
+        <h4>Verba:</h4>
+        <p>Saldo atual: R$ <span id="saldoADM">0.00</span></p>
+        <input type="number" id="retirarValor" placeholder="Quanto retirar?">
+        <button onclick="retirarVerba()">Retirar</button>
+      </div>
+    </div>
   </div>
 
   <!-- Botão instalar app -->
@@ -99,6 +105,7 @@
 
 </body>
 </html>
+
 
 
 
