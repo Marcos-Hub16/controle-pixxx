@@ -1,4 +1,3 @@
-/* Estilo padrão (PC) */
 body {
   font-family: system-ui;
   background: #FFD700;
@@ -10,7 +9,7 @@ body {
 
 .logo {
   width: 120px;
-  margin: 20px auto;\
+  margin: 20px auto;
 }
 
 .card {
@@ -36,8 +35,8 @@ input, button {
 
 .tablink {
   padding: 10px 15px;
-  background: white;      /* cor da aba não selecionada */
-  color: black;           /* texto da aba não selecionada */
+  background: white;
+  color: black;
   border: 1px solid black;
   border-radius: 8px;
   cursor: pointer;
@@ -46,11 +45,32 @@ input, button {
 }
 
 .tablink.active {
-  background: black;      /* cor da aba selecionada */
-  color: white;           /* texto da aba selecionada */
+  background: black;
+  color: white;
 }
 
-/* Estilo para celular */
+/* Lista de pagamentos estilo planilha */
+#listaPagamentos li, #listaADM li {
+  background: white;
+  margin: 5px auto;
+  padding: 10px;
+  max-width: 360px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#listaPagamentos li button, #listaADM li button {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 480px) {
   body {
     padding: 10px;
@@ -89,18 +109,6 @@ input, button {
     font-size: 16px;
   }
 }
-#listaPagamentos li {
-  background: white;
-  padding: 12px 15px;
-  margin: 8px 0;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr; /* Nome | Valor | DataHora */
-  gap: 10px;
-  align-items: center;
-  font-weight: bold;
-  font-size: 14px;
-}
+
 
 
