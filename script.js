@@ -1,186 +1,89 @@
-import { collection, addDoc, onSnapshot, doc, deleteDoc } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Protagonismo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// Elementos
-const tabelaBody = document.querySelector("#tabelaPagamentos tbody");
-const totalSpan = document.getElementById("total");
+  <img src="logo.png" alt="Logo" class="logo">
 
-// ------------------ SALDO DA VERBA ------------------
-let retirado = parseFloat(localStorage.getItem("saldoVerbaRetirada")) || 0;
-let adicionada = parseFloat(localStorage.getItem("saldoVerbaAdicionada")) || 0;
+  <h1>Protagonismo</h1>
+  <p>Organize quem pagou</p>
 
-// ------------------ PAGAMENTO ------------------
-function iniciarPagamento(botao) {
-  const nomeInput = document.getElementById("nome");
-  const valorInput = document.getElementById("valor");
+  <div class="tabs">
+    <button class="tablink active" onclick="openTab('enviar', event)">Enviar Pagamento</button>
+    <button class="tablink" onclick="openTab('lista', event)">Lista de Pagamentos</button>
+    <button class="tablink" onclick="openTab('adm', event)">ADM</button>
+  </div>
 
-  let nome = nomeInput.value.trim();
-  let valor = parseFloat(valorInput.value.replace(",", "."));
+  <!-- Aba Enviar Pagamento -->
+  <div id="enviar" class="tabcontent">
+    <div class="card">
+      <input type="text" id="nome" placeholder="Digite seu nome">
+      <input type="text" id="valor" placeholder="Valor (ex: 2,00)">
+      <button onclick="iniciarPagamento(this)">Registrar</button>
+    </div>
+  </div>
 
-  if(!nome) {
-    alert("Digite seu nome!");
-    return;
-  }
+  <!-- Aba Lista de Pagamentos -->
+  <div id="lista" class="tabcontent" style="display:none;">
+    <h2>Pagamentos registrados</h2>
+    <table id="tabelaPagamentos">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Valor (R$)</th>
+          <th>Data/Hora</th>
+          <th>Remover</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <h3>Total arrecadado: R$ <span id="total">0,00</span></h3>
+  </div>
 
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
+  <!-- Aba ADM -->
+  <div id="adm" class="tabcontent" style="display:none;">
+    <h2>Painel ADM</h2>
+    <p>Saldo: R$ <span id="saldoADM">0,00</span></p>
 
-  // Mostrar PIX imediatamente
-  document.getElementById("pixChave").style.display = "block";
+    <input type="password" id="senhaADM" placeholder="Senha ADM">
+    <button onclick="entrarADM()">Entrar</button>
 
-  botao.disabled = true;
-  let tempo = 5;
-  botao.textContent = `Aguardando ${tempo}s`;
+    <div id="painelADM" style="display:none;">
+      <h3>Retirar verba</h3>
+      <input type="text" id="retirarValor" placeholder="Quanto retirar?">
+      <button onclick="retirarVerba()">Retirar</button>
 
-  const intervalo = setInterval(() => {
-    tempo--;
-    botao.textContent = `Aguardando ${tempo}s`;
+      <h3>Adicionar verba</h3>
+      <input type="text" id="adicionarValor" placeholder="Quanto adicionar?">
+      <button onclick="adicionarVerba()">Adicionar</button>
+    </div>
+  </div>
 
-    if(tempo <= 0) {
-      clearInterval(intervalo);
-      botao.textContent = "Confirmar pagamento";
-      botao.disabled = false;
-
-      botao.onclick = async () => {
-        await addDoc(collection(window.db,"pagamentos"), {
-          nome: nome,
-          valor: valor,
-          data: new Date()
-        });
-
-        nomeInput.value = "";
-        valorInput.value = "";
-        botao.textContent = "Pagar novamente";
-        botao.onclick = () => iniciarPagamento(botao);
-      };
-    }
-  },1000);
-}
-
-// ------------------ LISTA DE PAGAMENTOS ------------------
-onSnapshot(collection(window.db,"pagamentos"), snapshot => {
-  tabelaBody.innerHTML = "";
-  let total = 0;
-
-  const pagamentos = [];
-  snapshot.forEach(doc => pagamentos.push({id: doc.id, ...doc.data()}));
-
-  // Ordena por data decrescente
-  pagamentos.sort((a,b) => new Date(b.data.seconds * 1000) - new Date(a.data.seconds * 1000));
-
-  pagamentos.forEach(data => {
-    const tr = document.createElement("tr");
-
-    const tdNome = document.createElement("td");
-    tdNome.textContent = data.nome || "Anônimo";
-
-    const tdValor = document.createElement("td");
-    tdValor.textContent = data.valor.toFixed(2).replace(".", ",");
-
-    const tdData = document.createElement("td");
-    tdData.textContent = new Date(data.data.seconds*1000).toLocaleString();
-
-    // Botão remover
-    const tdRemover = document.createElement("td");
-    const btnRemover = document.createElement("button");
-    btnRemover.textContent = "X";
-    btnRemover.style.color = "red";
-    btnRemover.style.cursor = "pointer";
-    btnRemover.onclick = async () => {
-      const senha = prompt("Digite a senha ADM para remover:");
-      if(senha === "GCM2026") {
-        await deleteDoc(doc(window.db,"pagamentos",data.id));
-        atualizarSaldoVerba();
-      } else {
-        alert("Senha incorreta!");
-      }
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8_Xn_GpvfAVsu-uZVve2h7ivz78bE6I8",
+      authDomain: "controle-pix-8f3b5.firebaseapp.com",
+      projectId: "controle-pix-8f3b5",
+      storageBucket: "controle-pix-8f3b5.firebasestorage.app",
+      messagingSenderId: "330284203781",
+      appId: "1:330284203781:web:2e1316c9009a3bd18e816c"
     };
-    tdRemover.appendChild(btnRemover);
+    const app = initializeApp(firebaseConfig);
+    window.db = getFirestore(app);
+  </script>
 
-    tr.appendChild(tdNome);
-    tr.appendChild(tdValor);
-    tr.appendChild(tdData);
-    tr.appendChild(tdRemover);
+  <script type="module" src="script.js"></script>
+</body>
+</html>
 
-    tabelaBody.appendChild(tr);
-    total += data.valor;
-  });
-
-  totalSpan.textContent = total.toFixed(2).replace(".", ",");
-  atualizarSaldoVerba();
-});
-
-// ------------------ FUNÇÃO PARA ATUALIZAR SALDO DA VERBA ------------------
-function atualizarSaldoVerba() {
-  const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
-  const saldoVerba = total + adicionada - retirado;
-  document.getElementById("saldoADM").textContent = saldoVerba.toFixed(2).replace(".", ",");
-}
-
-// ------------------ ABAS ------------------
-document.addEventListener("DOMContentLoaded", () => {
-  function openTab(tabName, event) {
-    document.querySelectorAll('.tabcontent').forEach(tab => tab.style.display = 'none');
-    document.querySelectorAll('.tablink').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tabName).style.display = 'block';
-    if(event) event.currentTarget.classList.add('active');
-  }
-
-  // Abre a aba "Enviar Pix" por padrão
-  openTab('enviar');
-
-  window.openTab = openTab;
-});
-
-// ------------------ ADM ------------------
-function entrarADM() {
-  const senha = document.getElementById("senhaADM").value;
-  if(senha === "GCM2026") {
-    document.getElementById("painelADM").style.display = "block";
-  } else {
-    alert("Senha incorreta!");
-  }
-}
-
-function retirarVerba() {
-  let valor = parseFloat(document.getElementById("retirarValor").value.replace(",", "."));
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
-
-  const total = parseFloat(totalSpan.textContent.replace(",", ".")) || 0;
-  if(valor > (total + adicionada - retirado)) {
-    alert("Você não pode retirar mais do que o saldo disponível!");
-    return;
-  }
-
-  retirado += valor;
-  localStorage.setItem("saldoVerbaRetirada", retirado);
-  atualizarSaldoVerba();
-  document.getElementById("retirarValor").value = "";
-}
-
-function adicionarVerba() {
-  let valor = parseFloat(document.getElementById("adicionarValor").value.replace(",", "."));
-  if(isNaN(valor) || valor <= 0) {
-    alert("Digite um valor positivo!");
-    return;
-  }
-
-  adicionada += valor;
-  localStorage.setItem("saldoVerbaAdicionada", adicionada);
-  atualizarSaldoVerba();
-  document.getElementById("adicionarValor").value = "";
-}
-
-// ------------------ EXPORTAR PARA HTML ------------------
-window.iniciarPagamento = iniciarPagamento;
-window.entrarADM = entrarADM;
-window.retirarVerba = retirarVerba;
-window.adicionarVerba = adicionarVerba;
 
 
 
